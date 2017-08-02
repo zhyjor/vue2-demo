@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue"></script>
+
+</head>
+<body>
+<div id="eg">
+    <div v-bind:class="{active : isActive}">
+        11
+    </div>
+    <div class="static"
+         v-bind:class="{active:isActive, 'text-danger':hasError}">
+        22
+    </div>
+    <div v-bind:class="classObj">33</div>
+    <div v-bind:class="[isActive ? activeClass : '',errorClass]">44</div>
+
+    <div v-bind:style="styleObj">55</div>
+    <div v-bind:style="[overidingstyles]">66</div>
+    <div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">77</div>
+</div>
+
+</body>
+<script>
+    var vm = new Vue({
+        el: '#eg',
+        data: {
+            isActive: true,
+            hasError: true,
+            classObj:{
+                active:true,
+                'text-danger':false
+            },
+            activeClass:'active',
+            errorClass:'hasError',
+            styleObj:{
+                color:'red',
+                fontSize:'130px'
+            },
+            baseStyle:{color:'red'},
+            overidingstyles:{fontSize:'130px',color:'red'}
+        }
+    })
+</script>
+</html>
