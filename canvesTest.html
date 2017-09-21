@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style rel="stylesheet">
+        .goods {
+            display: flex;
+            position: absolute;
+            top: 174px;
+            bottom: 46px;
+            width: 100%;
+            overflow: hidden;
+            border: solid red 3px;
+        }
+
+        .goods .menu-wrapper {
+            flex: 0 0 200px;
+            width: 80px;
+            background: #f3f5f7;
+        }
+
+        .goods .menu-wrapper .menu-item {
+            display: table;
+            height: 100px;
+            width: 150px;
+            padding: 0 0px;
+            line-height: 40px;
+            font-size: 40px;
+
+        }
+
+        .goods .foods-wrapper {
+            flex: 1;
+            border: solid green 3px;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="goods">
+    <div class="menu-wrapper" ref="menuWrapper">
+        <ul>
+            <li class="menu-item">哈哈哈</li>
+            <li class="menu-item">哈哈哈</li>
+            <li class="menu-item">哈哈哈</li>
+        </ul>
+    </div>
+    <div class="foods-wrapper" id="floor_img">
+        <canvas id="myCanvas">
+
+        </canvas>
+    </div>
+</div>
+<script src="jquery-3.2.1.js"></script>
+</body>
+<script>
+
+    $(window).resize(resizeCanvas);
+
+    function resizeCanvas() {
+
+        $('#myCanvas').attr("width", $('#floor_img').width());
+
+        $('#myCanvas').attr("height", $('#floor_img').height());
+
+        //获取上下文文档对象
+        var clock = document.getElementById('myCanvas');
+        var cxt = clock.getContext('2d');
+
+//画指针
+        function drawPointer(width, color, value, angle, startx, starty, endx, endy) {
+            cxt.save();                 //先保存当前画布
+            cxt.lineWidth = width;      //设置画笔的宽度
+            cxt.strokeStyle = color;    //设置画笔的颜色
+            cxt.translate(550, 310);    //重置异次元空间的原点坐标
+            cxt.rotate(value * angle * Math.PI / 180);  //设置旋转的角度，参数是弧度
+            cxt.beginPath();
+            cxt.moveTo(startx, starty);
+            cxt.lineTo(endx, endy);
+            cxt.closePath();            //先闭合路径，再画线
+            cxt.stroke();               //开始画线
+            cxt.restore();              //将旋转后的线段返回给画布
+        }
+
+//画刻度
+        function drawScale(size, width, color, value, startx, starty, endx, endy) {
+            for (var i = 0; i < size; i++) {
+                drawPointer(width, color, value, i, startx, starty, endx, endy);
+            }
+        }
+
+//为表盘的中心填充颜色
+        function drawFill() {
+            cxt.save();
+            cxt.beginPath();
+            cxt.arc(550, 310, 7, 0, 360, false);
+            cxt.closePath();
+            cxt.fillStyle = "red";
+            cxt.fill();
+            cxt.restore();
+        }
+
+//画时钟
+        function drawClock() {
+            cxt.clearRect(0, 0, 1350, 620);  //清空整个画布
+
+            var now = new Date();            //获取系统时间，取出时,分,秒
+            var sec = now.getSeconds();
+            var min = now.getMinutes();
+            var hour = now.getHours();
+            min += sec / 60;
+            hour += min / 60;
+            if (hour > 12) hour -= 12;
+
+            cxt.beginPath();
+            cxt.lineWidth = 10;
+            cxt.strokeStyle = "blue";
+            cxt.arc(550, 310, 300, 0, 360, false);
+            cxt.closePath();
+            cxt.stroke();
+
+            drawScale(12, 7, "pink", 30, 0, -280, 0, -260);      //画时刻度
+            drawScale(60, 5, "pink", 6, 0, -280, 0, -270);      //画分刻度
+            drawPointer(7, "purple", hour, 30, 0, 12, 0, -210);  //画时针
+            drawPointer(5, "yellow", min, 6, 0, 15, 0, -240);    //画分针
+            drawPointer(4, "red", sec, 6, 0, 17, 0, -250);       //画秒针
+
+            //细化秒针,为秒针加箭头
+            drawPointer(3, "red", sec, 6, -7, -235, 0, -255);
+            drawPointer(3, "red", sec, 6, 7, -235, 0, -255);
+            drawFill();
+        }
+
+        drawClock();
+        setInterval(drawClock, 1000);   //setInterval()方法中表示每隔1000ms，就执行drawClock一次
+    };
+
+    resizeCanvas();
+
+
+</script>
+
+</html>
